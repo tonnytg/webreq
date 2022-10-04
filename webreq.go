@@ -1,4 +1,4 @@
-package pkggowebreq
+package webreq
 
 import (
 	"context"
@@ -10,7 +10,7 @@ import (
 
 // only works with this methods
 const (
-	MethodGet     = "GET"
+	MethodGet = "GET"
 )
 
 // Get receive an url, you can send headers and timeout parameters for request.
@@ -31,7 +31,7 @@ func Get(url string, headers []string, timeOut int) ([]byte, error) {
 	if timeOut == 0 {
 		timeOut = 10
 	}
-	ctx, cancel := context.WithTimeout(ctx,  time.Duration(timeOut) * time.Second)
+	ctx, cancel := context.WithTimeout(ctx, time.Duration(timeOut)*time.Second)
 	defer cancel()
 
 	// request with NewRequest permit add headers
