@@ -10,15 +10,21 @@ import (
 
 // only works with this methods
 const (
-	MethodGet = "GET"
+	Method = "GET"
 )
 
 // Get receive an url, you can send headers and timeout parameters for request.
-func Get(url string, headers []string, timeOut int) ([]byte, error) {
+func Get(url string, headers map[string]string, timeOut int) ([]byte, error) {
 
 	fmt.Println("url:", url)
-	for i, v := range headers {
-		fmt.Println(i, v)
+	// print headers
+	fmt.Println("headers:")
+	if len(headers) > 0 {
+		for k, v := range headers {
+			fmt.Println("\t", k, ":", v)
+		}
+	} else {
+		fmt.Println("\tNo headers")
 	}
 
 	// client run everything
@@ -35,7 +41,7 @@ func Get(url string, headers []string, timeOut int) ([]byte, error) {
 	defer cancel()
 
 	// request with NewRequest permit add headers
-	request, err := http.NewRequestWithContext(ctx, MethodGet, url, nil)
+	request, err := http.NewRequestWithContext(ctx, Method, url, nil)
 	if err != nil {
 		return nil, err
 	}
