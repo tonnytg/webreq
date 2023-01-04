@@ -13,11 +13,8 @@ const (
 	Method = "GET"
 )
 
-// Get receive an url, you can send headers and timeout parameters for request.
-func Get(url string, headers map[string]string, timeOut int) ([]byte, error) {
-
-	fmt.Println("url:", url)
-	// print headers
+// PrintHeaders print headers paralelly with request
+func PrintHeaders(headers map[string]string) {
 	fmt.Println("headers:")
 	if len(headers) > 0 {
 		for k, v := range headers {
@@ -26,6 +23,14 @@ func Get(url string, headers map[string]string, timeOut int) ([]byte, error) {
 	} else {
 		fmt.Println("\tNo headers")
 	}
+}
+
+// Get receive an url, you can send headers and timeout parameters for request.
+func Get(url string, headers map[string]string, timeOut int) ([]byte, error) {
+
+	fmt.Println("url:", url)
+	// print headers
+	go PrintHeaders(headers)
 
 	// client run everything
 	client := &http.Client{
