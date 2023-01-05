@@ -37,7 +37,7 @@ func TestPackagePost(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	body, err := webreq.Post(url, fBytes, headers, timeOut)
+	body, err := webreq.Post(url, headers, timeOut, fBytes)
 	if err != nil {
 		t.Error(err)
 	}

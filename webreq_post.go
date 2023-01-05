@@ -9,7 +9,7 @@ import (
 )
 
 // Post you can send a struct and receive a response from a url
-func Post(url string, data []byte, headers map[string]string, timeOut int) ([]byte, error) {
+func Post(url string, headers map[string]string, timeOut int, data []byte) ([]byte, error) {
 
 	client := &http.Client{
 		CheckRedirect: nil,
