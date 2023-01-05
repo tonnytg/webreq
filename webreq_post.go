@@ -1,32 +1,15 @@
 package webreq
 
 import (
+	"bytes"
 	"context"
-	"fmt"
 	"io"
 	"net/http"
 	"time"
 )
 
-// only works with this methods
-const (
-	Method = "GET"
-)
-
-// PrintHeaders print headers paralelly with request
-func PrintHeaders(headers map[string]string) {
-	fmt.Println("headers:")
-	if len(headers) > 0 {
-		for k, v := range headers {
-			fmt.Println("\t", k, ":", v)
-		}
-	} else {
-		fmt.Println("\tNo headers")
-	}
-}
-
-// Get receive an url, you can send headers and timeout parameters for request.
-func Get(url string, headers map[string]string, timeOut int) ([]byte, error) {
+// Post you can send a struct and receive a response from a url
+func Post(url string, data []byte, headers map[string]string, timeOut int) ([]byte, error) {
 
 	client := &http.Client{
 		CheckRedirect: nil,
@@ -34,11 +17,12 @@ func Get(url string, headers map[string]string, timeOut int) ([]byte, error) {
 	if timeOut == 0 {
 		timeOut = 10
 	}
+	dataBody := io.NopCloser(bytes.NewReader(data))
 
 	ctx := context.Background()
 	ctx, cancel := context.WithTimeout(ctx, time.Duration(timeOut)*time.Second)
 	defer cancel()
-	request, err := http.NewRequestWithContext(ctx, Method, url, nil)
+	request, err := http.NewRequestWithContext(ctx, MethodPost, url, dataBody)
 	if err != nil {
 		return nil, err
 	}
