@@ -8,7 +8,14 @@ import (
 func TestPackageGet(t *testing.T) {
 	url := "https://www.google.com"
 	timeOut := 20
-	headers := map[string]string{}
+	headers := map[string]string{
+		"Accept":          "text/html",
+		"Accept-Encoding": "gzip, deflate, br",
+		"Accept-Language": "en-US,en;q=0.9,es;q=0.8",
+		"Cache-Control":   "max-age=0",
+		"Connection":      "keep-alive",
+		"Content-Type":    "application/json",
+	}
 	body, err := webreq.Get(url, headers, timeOut)
 	if err != nil {
 		t.Error(err)
