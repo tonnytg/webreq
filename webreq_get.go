@@ -8,7 +8,7 @@ import (
 )
 
 // Get receive an url, you can send headers and timeout parameters for request.
-func Get(url string, headers map[string]string, timeOut int) ([]byte, error) {
+func Get(url string, h Headers, timeOut int) ([]byte, error) {
 
 	client := &http.Client{
 		CheckRedirect: nil,
@@ -24,9 +24,11 @@ func Get(url string, headers map[string]string, timeOut int) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	go PrintHeaders(headers)
-	for k, v := range headers {
-		request.Header.Add(k, v)
+	go PrintHeaders(h)
+	for _, v := range h.Headers {
+		for k, vv := range v {
+			request.Header.Add(k, vv)
+		}
 	}
 	response, err := client.Do(request)
 	if err != nil {

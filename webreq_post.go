@@ -9,7 +9,7 @@ import (
 )
 
 // Post you can send a struct and receive a response from a url
-func Post(url string, headers map[string]string, timeOut int, data []byte) ([]byte, error) {
+func Post(url string, headers Headers, timeOut int, data []byte) ([]byte, error) {
 
 	client := &http.Client{
 		CheckRedirect: nil,
@@ -27,8 +27,10 @@ func Post(url string, headers map[string]string, timeOut int, data []byte) ([]by
 		return nil, err
 	}
 	go PrintHeaders(headers)
-	for k, v := range headers {
-		request.Header.Add(k, v)
+	for _, v := range headers.Headers {
+		for k, vv := range v {
+			request.Header.Add(k, vv)
+		}
 	}
 	response, err := client.Do(request)
 	if err != nil {
