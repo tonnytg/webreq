@@ -3,12 +3,13 @@ package webreq
 import (
 	"context"
 	"io"
+	"log"
 	"net/http"
 	"time"
 )
 
 // Get receive an url, you can send headers and timeout parameters for request.
-func Get(url string, h Headers, timeOut int) ([]byte, error) {
+func Get(url string, headers *Headers, timeOut int) ([]byte, error) {
 
 	client := &http.Client{
 		CheckRedirect: nil,
@@ -24,19 +25,24 @@ func Get(url string, h Headers, timeOut int) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	go PrintHeaders(h)
-	for _, v := range h.Headers {
-		for k, vv := range v {
-			request.Header.Add(k, vv)
+	go PrintHeaders(headers)
+	for _, headers := range headers.List {
+		for k, v := range headers {
+			request.Header.Add(k, v)
 		}
 	}
-	response, err := client.Do(request)
+	resp, err := client.Do(request)
 	if err != nil {
 		return nil, err
 	}
-	defer response.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			log.Println("error to close body:", err)
+		}
+	}(resp.Body)
 
-	body, err := io.ReadAll(response.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}

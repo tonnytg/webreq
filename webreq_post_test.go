@@ -18,10 +18,8 @@ func TestPackagePost(t *testing.T) {
 	url := "https://610aa52552d56400176afebe.mockapi.io/api/v1/friendlist"
 	timeOut := 20
 
-	h := webreq.H{}
-	headers := webreq.Headers{}
-	h["Content-Type"] = "application/json"
-	headers.Add(h)
+	headers := webreq.NewHeaders()
+	headers.Add("Content-Type", "application/json")
 
 	f := Friend{
 		CreatedAt:  time.Now(),

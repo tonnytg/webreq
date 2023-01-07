@@ -2,6 +2,7 @@ package webreq
 
 import (
 	"encoding/json"
+	"fmt"
 )
 
 // only works with this methods
@@ -13,18 +14,22 @@ const (
 type H map[string]string
 
 type Headers struct {
-	Headers []H
+	List []H
 }
 
-func (h *Headers) Add(header H) {
-	h.Headers = append(h.Headers, header)
+func NewHeaders() *Headers {
+	return &Headers{}
 }
 
-// PrintHeaders print headers paralelly with request
-func PrintHeaders(headers Headers) {
-	for _, header := range headers.Headers {
+func (h *Headers) Add(key string, value string) {
+	h.List = append(h.List, H{key: value})
+}
+
+// PrintHeaders print headers parallel with request
+func PrintHeaders(headers *Headers) {
+	for _, header := range headers.List {
 		for k, v := range header {
-			println(k, v)
+			fmt.Printf("%s: %s\n", k, v)
 		}
 	}
 }
