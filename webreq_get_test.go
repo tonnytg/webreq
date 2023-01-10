@@ -12,7 +12,7 @@ func TestPackageGet(t *testing.T) {
 	headers := webreq.NewHeaders()
 	headers.Add("Content-Type", "application/json")
 
-	resp, err := webreq.Get(url, headers, timeOut)
+	resp, err := webreq.Execute("GET", url, headers, nil, timeOut)
 	if err != nil {
 		t.Error(err)
 	}
