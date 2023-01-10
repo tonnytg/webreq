@@ -1,7 +1,6 @@
 package webreq_test
 
 import (
-	"fmt"
 	"github.com/tonnytg/webreq"
 	"testing"
 	"time"
@@ -15,8 +14,6 @@ type Friend struct {
 }
 
 func TestPackagePost(t *testing.T) {
-	url := "https://610aa52552d56400176afebe.mockapi.io/api/v1/friendlist"
-	timeOut := 20
 
 	headers := webreq.NewHeaders()
 	headers.Add("Content-Type", "application/json")
@@ -27,12 +24,18 @@ func TestPackagePost(t *testing.T) {
 		Job:        "Developer",
 		FamilyName: "Gomes",
 	}
+
 	// convert f to bytes
 	fBytes, err := webreq.StructToBytes(f)
 	if err != nil {
 		t.Error(err)
 	}
-	body, err := webreq.Execute("POST", url, headers, fBytes, timeOut)
+
+	request := webreq.Builder("POST")
+	request.SetURL("https://610aa52552d56400176afebe.mockapi.io/api/v1/friendlist")
+	request.SetBody(fBytes)
+
+	body, err := request.Execute()
 	if err != nil {
 		t.Error(err)
 	}
@@ -40,5 +43,4 @@ func TestPackagePost(t *testing.T) {
 	if bodyString == "" {
 		t.Error("body is empty")
 	}
-	fmt.Println(bodyString)
 }

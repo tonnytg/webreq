@@ -11,84 +11,75 @@ import (
 
 var dataBody io.Reader
 
-// Get receive an url, you can send headers and timeout parameters for request.
-func Get(url string, headers *Headers, timeOut int) ([]byte, error) {
-
-	client := &http.Client{
-		CheckRedirect: nil,
-	}
-	if timeOut == 0 {
-		timeOut = 10
-	}
-
-	ctx := context.Background()
-	ctx, cancel := context.WithTimeout(ctx, time.Duration(timeOut)*time.Second)
-	defer cancel()
-	request, err := http.NewRequestWithContext(ctx, MethodGet, url, nil)
-	if err != nil {
-		return nil, err
-	}
-	go PrintHeaders(headers)
-	for _, headers := range headers.List {
-		for k, v := range headers {
-			request.Header.Add(k, v)
-		}
-	}
-	resp, err := client.Do(request)
-	if err != nil {
-		return nil, err
-	}
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			log.Println("error to close body:", err)
-		}
-	}(resp.Body)
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	return body, nil
+type Request struct {
+	URL         string
+	TimeOut     int
+	Headers     []H
+	TypeRequest string
+	Body        []byte
+	StatusCode  int
 }
 
-// Get receive an url, you can send headers and timeout parameters for request.
-func Execute(method string, url string, headers *Headers, data []byte, timeOut int) ([]byte, error) {
+func Builder(method string) *Request {
+	r := Request{}
 
-	client := &http.Client{
-		CheckRedirect: nil,
-	}
-	if timeOut == 0 {
-		timeOut = 10
-	}
+	r.SetTimeOut(10)
+	r.SetTypeRequest(method)
 
-	if method == "GET" {
-		dataBody = nil
-	} else if method == "POST" {
-		dataBody = io.NopCloser(bytes.NewReader(data))
-	}
+	return &r
+}
 
+func (r *Request) SetURL(url string) *Request {
+	r.URL = url
+	return r
+}
+
+func (r *Request) SetTimeOut(timeOut int) *Request {
+	r.TimeOut = timeOut
+	return r
+}
+
+func (r *Request) SetHeaders(headers *Headers) *Request {
+	r.Headers = headers.List
+	return r
+}
+
+func (r *Request) SetBody(body []byte) *Request {
+	r.Body = body
+	return r
+}
+
+func (r *Request) SetTypeRequest(typeRequest string) *Request {
+	r.TypeRequest = typeRequest
+	return r
+}
+
+func (r *Request) SetStatusCode(statusCode int) *Request {
+	r.StatusCode = statusCode
+	return r
+}
+
+func (r *Request) Execute() ([]byte, error) {
+
+	client := &http.Client{}
 	ctx := context.Background()
-	ctx, cancel := context.WithTimeout(ctx, time.Duration(timeOut)*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, time.Duration(r.TimeOut)*time.Second)
 	defer cancel()
-	request, err := http.NewRequestWithContext(ctx, method, url, dataBody)
+
+	request, err := http.NewRequestWithContext(ctx,
+		r.TypeRequest,
+		r.URL,
+		bytes.NewReader(r.Body))
 	if err != nil {
 		return nil, err
 	}
-	go PrintHeaders(headers)
-	for _, headers := range headers.List {
-		for k, v := range headers {
-			request.Header.Add(k, v)
-		}
-	}
+
 	resp, err := client.Do(request)
 	if err != nil {
 		return nil, err
 	}
 	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
+		if err := Body.Close(); err != nil {
 			log.Println("error to close body:", err)
 		}
 	}(resp.Body)

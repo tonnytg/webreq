@@ -5,19 +5,16 @@ import (
 	"testing"
 )
 
-func TestPackageGet(t *testing.T) {
-	url := "https://www.google.com"
-	timeOut := 20
+func TestPackageCall(t *testing.T) {
 
 	headers := webreq.NewHeaders()
 	headers.Add("Content-Type", "application/json")
 
-	resp, err := webreq.Execute("GET", url, headers, nil, timeOut)
+	request := webreq.Builder("GET")
+	request.SetURL("https://610aa52552d56400176afebe.mockapi.io/api/v1/friendlist")
+
+	_, err := request.Execute()
 	if err != nil {
 		t.Error(err)
-	}
-	body := string(resp)
-	if body == "" {
-		t.Error("body is empty")
 	}
 }

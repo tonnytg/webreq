@@ -13,32 +13,41 @@ You can use Get or Post to make a request, and then use the `Response` object to
 
 Create a slice of headers to use and input in request 
 
-    url := "https://www.google.com/robots.txt"
-    headers := webreq.NewHeaders()
-    headers.Add("Content-Type", "application/json")
+	headers := webreq.NewHeaders()
+	headers.Add("Content-Type", "application/json")
 
-    resp, err := webreq.Get(url, headers, timeOut)
-    if err != nil {
-        panic(err)
-    }
-    fmt.Printf("%s\n", resp)
+	request := webreq.Builder("GET")
+	request.SetURL("https://610aa52552d56400176afebe.mockapi.io/api/v1/friendlist")
+
+	_, err := request.Execute()
+	if err != nil {
+		t.Error(err)
+	}
 
 
 ### Post
 
 Create a body data to send in request
 
-    url := "https://www.google.com/robots.txt"
-    timeOut := 5
-    headers := webreq.NewHeaders()
-    headers.Add("Content-Type", "application/json")
-    bodyData := map[string]string{
-        "name": "tonnytg",
-        "age":  "20",
-    }
+    ...
+	f := Friend{
+		CreatedAt:  time.Now(),
+		Name:       "Tonny",
+	}
 
-    resp, err := webreq.Post(url, headers, timeOut, bodyData)
-    if err != nil {
-        panic(err)
-    }
-    fmt.Printf("%s\n", resp)
+	// convert f to bytes
+	fBytes, err := webreq.StructToBytes(f)
+	if err != nil {
+		t.Error(err)
+	}
+
+	request := webreq.Builder("POST")
+	request.SetURL("https://610aa52552d56400176afebe.mockapi.io/api/v1/friendlist")
+	request.SetBody(fBytes)
+
+	body, err := request.Execute()
+	if err != nil {
+		t.Error(err)
+	}
+    ...
+    

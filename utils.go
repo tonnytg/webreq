@@ -5,12 +5,6 @@ import (
 	"fmt"
 )
 
-// only works with this methods
-const (
-	MethodGet  = "GET"
-	MethodPost = "POST"
-)
-
 type H map[string]string
 
 type Headers struct {
