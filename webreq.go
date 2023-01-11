@@ -9,8 +9,6 @@ import (
 	"time"
 )
 
-var dataBody io.Reader
-
 type Request struct {
 	URL         string
 	TimeOut     int
@@ -75,6 +73,7 @@ func (r *Request) Execute() ([]byte, error) {
 	}
 
 	resp, err := client.Do(request)
+	r.SetStatusCode(resp.StatusCode)
 	if err != nil {
 		return nil, err
 	}

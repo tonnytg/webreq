@@ -1,6 +1,7 @@
 package webreq_test
 
 import (
+	"encoding/json"
 	"github.com/tonnytg/webreq"
 	"testing"
 	"time"
@@ -26,7 +27,7 @@ func TestPackagePost(t *testing.T) {
 	}
 
 	// convert f to bytes
-	fBytes, err := webreq.StructToBytes(f)
+	fBytes, err := json.Marshal(f)
 	if err != nil {
 		t.Error(err)
 	}

@@ -36,7 +36,7 @@ Create a body data to send in request
 	}
 
 	// convert f to bytes
-	fBytes, err := webreq.StructToBytes(f)
+	fBytes, err := json.Marshal(f)
 	if err != nil {
 		t.Error(err)
 	}
