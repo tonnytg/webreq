@@ -1,6 +1,5 @@
 # Web Request for Go Packages
 [![Go Report Card](https://goreportcard.com/badge/github.com/tonnytg/webreq)](https://goreportcard.com/report/github.com/tonnytg/webreq)
-[![Known Vulnerabilities](https://snyk.io/test/github/tonnytg/webreq/badge.svg)](https://snyk.io/test/github/tonnytg/webreq)
 
 ## What is this?
 
