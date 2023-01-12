@@ -85,6 +85,11 @@ func (r *Request) Execute() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+	for _, header := range r.Headers {
+		for key, value := range header {
+			request.Header.Add(key, value)
+		}
+	}
 
 	resp, err := client.Do(request)
 	r.SetStatusCode(resp.StatusCode)
