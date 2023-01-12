@@ -6,6 +6,13 @@
 This is module to help you make web requests in Go, it is a wrapper around the standard library's `http` package.
 You can use Get or Post to make a request, and then use the `Response` object to get the response body, headers, status code, etc.
 
+## Why
+
+So many times I needed make a request in a API and after convert body to struct, and every time I needed to configure http.client and put headers and body. Thinking about "don't repeat your self" I belive this unified code can gain time build a easily way to make this request.
+
+What do you think? Liked, set star in this project to help me to help others!
+
+
 ### Install
 
 > go get github.com/tonnytg/webreq
