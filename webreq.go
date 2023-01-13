@@ -3,8 +3,8 @@ package webreq
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"time"
 )
@@ -78,6 +78,10 @@ func (r *Request) Execute() ([]byte, error) {
 	ctx, cancel := context.WithTimeout(ctx, time.Duration(r.TimeOut)*time.Second)
 	defer cancel()
 
+	if r.URL == "" {
+		return nil, fmt.Errorf("url is empty")
+	}
+
 	request, err := http.NewRequestWithContext(ctx,
 		r.TypeRequest,
 		r.URL,
@@ -96,11 +100,7 @@ func (r *Request) Execute() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer func(Body io.ReadCloser) {
-		if err := Body.Close(); err != nil {
-			log.Println("error to close body:", err)
-		}
-	}(resp.Body)
+	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {

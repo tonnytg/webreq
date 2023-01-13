@@ -18,6 +18,9 @@ func TestPackagePost(t *testing.T) {
 
 	headers := webreq.NewHeaders()
 	headers.Add("Content-Type", "application/json")
+	if len(headers.List) != 1 {
+		t.Error("headers is empty")
+	}
 
 	f := Friend{
 		CreatedAt:  time.Now(),
@@ -35,6 +38,8 @@ func TestPackagePost(t *testing.T) {
 	request := webreq.Builder("POST")
 	request.SetURL("https://610aa52552d56400176afebe.mockapi.io/api/v1/friendlist")
 	request.SetBody(fBytes)
+	request.SetHeaders(headers)
+	request.SetTimeOut(10)
 
 	body, err := request.Execute()
 	if err != nil {

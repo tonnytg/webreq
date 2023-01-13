@@ -12,9 +12,30 @@ func TestPackageCall(t *testing.T) {
 
 	request := webreq.Builder("GET")
 	request.SetURL("https://610aa52552d56400176afebe.mockapi.io/api/v1/friendlist")
+	request.SetHeaders(headers)
+	request.SetTimeOut(10)
 
-	_, err := request.Execute()
+	body, err := request.Execute()
 	if err != nil {
 		t.Error(err)
+	}
+	bodyString := string(body)
+	if bodyString == "" {
+		t.Error("body is empty")
+	}
+
+}
+
+func TestWrongCall(t *testing.T) {
+
+	request := webreq.Builder("GET")
+
+	body, err := request.Execute()
+	if err == nil {
+		t.Error(err)
+	}
+	bodyString := string(body)
+	if bodyString != "" {
+		t.Error("body is not empty")
 	}
 }
