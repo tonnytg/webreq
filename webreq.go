@@ -12,7 +12,7 @@ import (
 type H map[string]string
 
 type Headers struct {
-	List []H
+	Headers map[string]string
 }
 
 func NewHeaders() *Headers {
@@ -53,7 +53,7 @@ func (r *Request) SetTimeOut(timeOut int) *Request {
 	return r
 }
 
-func (r *Request) SetHeaders(headers *Headers) *Request {
+func (r *Request) SetHeaders(headers Headers map[string]string) *Request {
 	r.Headers = headers.List
 	return r
 }
@@ -115,9 +115,11 @@ func (r *Request) Execute() ([]byte, error) {
 	}
 
 	resp, err := client.Do(request)
-	r.SetStatusCode(resp.StatusCode)
 	if err != nil {
 		return nil, err
+	}
+	if resp != nil {
+		r.SetStatusCode(resp.StatusCode)
 	}
 	defer resp.Body.Close()
 
