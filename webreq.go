@@ -32,6 +32,8 @@ type Request struct {
 	StatusCode  int
 }
 
+var DatabaseHistory []Request
+
 func Builder(method string) *Request {
 	r := Request{}
 
@@ -71,7 +73,24 @@ func (r *Request) SetStatusCode(statusCode int) *Request {
 	return r
 }
 
+// list history of requests, can pass limit
+func GetHistory(limit int) []Request {
+
+	if limit == 0 {
+		return DatabaseHistory
+	}
+
+	if limit > len(DatabaseHistory) {
+		for i := 0; i < len(DatabaseHistory); i++ {
+			return DatabaseHistory
+		}
+	}
+	return DatabaseHistory[:limit]
+}
+
 func (r *Request) Execute() ([]byte, error) {
+
+	DatabaseHistory = append(DatabaseHistory, *r)
 
 	client := &http.Client{}
 	ctx := context.Background()
