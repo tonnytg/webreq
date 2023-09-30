@@ -8,7 +8,7 @@ You can use Get or Post to make a request, and then use the `Response` object to
 
 ## Why
 
-So many times I needed make a request in a API and after convert body to struct, and every time I needed to configure http.client and put headers and body. Thinking about "don't repeat your self" I belive this unified code can gain time build a easily way to make this request.
+So many times I needed to make a request in an API and after convert body to struct, and every time I needed to configure http.Client and put headers and body. Thinking about "don't repeat your self" I believe this unified code can gain time build an easy way to make this request.
 
 What do you think? Liked, set star in this project to help me to help others!
 
