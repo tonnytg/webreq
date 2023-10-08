@@ -28,13 +28,11 @@ func (h *Headers) Add(key string, value string) {
 type Request struct {
 	URL         string
 	TimeOut     int
-	Headers     []H
+	Headers     map[string]string
 	TypeRequest string
 	Body        []byte
 	StatusCode  int
 }
-
-var DatabaseHistory []Request
 
 func Builder(method string) *Request {
 	r := Request{}
@@ -55,8 +53,8 @@ func (r *Request) SetTimeOut(timeOut int) *Request {
 	return r
 }
 
-func (r *Request) SetHeaders(headers Headers map[string]string) *Request {
-	r.Headers = headers.List
+func (r *Request) SetHeaders(headers map[string]string) *Request {
+	r.Headers = headers
 	return r
 }
 
@@ -77,8 +75,6 @@ func (r *Request) SetStatusCode(statusCode int) *Request {
 
 func (r *Request) Execute() ([]byte, error) {
 
-	DatabaseHistory = append(DatabaseHistory, *r)
-
 	client := &http.Client{}
 	ctx := context.Background()
 	ctx, cancel := context.WithTimeout(ctx, time.Duration(r.TimeOut)*time.Second)
@@ -95,10 +91,9 @@ func (r *Request) Execute() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	for _, header := range r.Headers {
-		for key, value := range header {
-			request.Header.Add(key, value)
-		}
+
+	for key, value := range r.Headers {
+		request.Header.Add(key, value)
 	}
 
 	resp, err := client.Do(request)
@@ -107,8 +102,8 @@ func (r *Request) Execute() ([]byte, error) {
 	}
 	if resp != nil {
 		r.SetStatusCode(resp.StatusCode)
+		defer resp.Body.Close()
 	}
-	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
