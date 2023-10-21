@@ -3,112 +3,109 @@ package webreq
 import (
 	"bytes"
 	"context"
-	"fmt"
 	"io"
 	"net/http"
 	"time"
 )
 
-type H map[string]string
+const (
+	MethodGet  = "GET"
+	MethodPost = "POST"
+)
+
+type HeadersMap map[string]string
 
 type Headers struct {
-	Headers map[string]string
+	Headers HeadersMap
 }
 
 func NewHeaders() *Headers {
 	return &Headers{
-		Headers: make(map[string]string),
+		Headers: make(HeadersMap),
 	}
 }
 
-func (h *Headers) Add(key string, value string) {
-	h.Headers[key] = value
+func (header *Headers) Add(key string, value string) {
+	header.Headers[key] = value
 }
 
 type Request struct {
-	URL         string
-	TimeOut     int
-	Headers     map[string]string
-	TypeRequest string
-	Body        []byte
-	StatusCode  int
+	URL             string
+	TimeoutDuration time.Duration
+	Headers         HeadersMap
+	RequestType     string
+	RequestBody     []byte
+	StatusCode      int
 }
 
-func Builder(method string) *Request {
-	r := Request{}
-
-	r.SetTimeOut(10)
-	r.SetTypeRequest(method)
-
-	return &r
+func NewRequest(method string) Request {
+	return Request{
+		TimeoutDuration: 10 * time.Second,
+		RequestType:     method,
+	}
 }
 
-func (r *Request) SetURL(url string) *Request {
-	r.URL = url
-	return r
+func (request *Request) SetURL(urlValue string) *Request {
+	if urlValue == "" {
+		panic("URL cannot be empty")
+	}
+	request.URL = urlValue
+	return request
 }
 
-func (r *Request) SetTimeOut(timeOut int) *Request {
-	r.TimeOut = timeOut
-	return r
+func (request *Request) SetTimeout(timeout int) *Request {
+	request.TimeoutDuration = time.Duration(timeout) * time.Second
+	return request
 }
 
-func (r *Request) SetHeaders(headers map[string]string) *Request {
-	r.Headers = headers
-	return r
+func (request *Request) SetHeaders(headers HeadersMap) *Request {
+	request.Headers = headers
+	return request
 }
 
-func (r *Request) SetBody(body []byte) *Request {
-	r.Body = body
-	return r
+func (request *Request) SetBody(bodyValue []byte) *Request {
+	request.RequestBody = bodyValue
+	return request
 }
 
-func (r *Request) SetTypeRequest(typeRequest string) *Request {
-	r.TypeRequest = typeRequest
-	return r
+func (request *Request) SetRequestType(requestTypeValue string) *Request {
+	request.RequestType = requestTypeValue
+	return request
 }
 
-func (r *Request) SetStatusCode(statusCode int) *Request {
-	r.StatusCode = statusCode
-	return r
+func (request *Request) SetStatusCode(statusCodeValue int) *Request {
+	request.StatusCode = statusCodeValue
+	return request
 }
 
-func (r *Request) Execute() ([]byte, error) {
-
+func (request *Request) Execute() ([]byte, error) {
 	client := &http.Client{}
-	ctx := context.Background()
-	ctx, cancel := context.WithTimeout(ctx, time.Duration(r.TimeOut)*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), request.TimeoutDuration)
 	defer cancel()
 
-	if r.URL == "" {
-		return nil, fmt.Errorf("url is empty")
-	}
-
-	request, err := http.NewRequestWithContext(ctx,
-		r.TypeRequest,
-		r.URL,
-		bytes.NewReader(r.Body))
+	webRequest, err := http.NewRequestWithContext(ctx, request.RequestType, request.URL, bytes.NewReader(request.RequestBody))
 	if err != nil {
 		return nil, err
 	}
 
-	for key, value := range r.Headers {
-		request.Header.Add(key, value)
+	for key, value := range request.Headers {
+		webRequest.Header.Add(key, value)
 	}
 
-	resp, err := client.Do(request)
+	response, err := client.Do(webRequest)
 	if err != nil {
 		return nil, err
 	}
-	if resp != nil {
-		r.SetStatusCode(resp.StatusCode)
-		defer resp.Body.Close()
+	defer response.Body.Close()
+
+	if response != nil {
+		request.SetStatusCode(response.StatusCode)
 	}
 
-	body, err := io.ReadAll(resp.Body)
+	responseBody, err := io.ReadAll(response.Body)
 	if err != nil {
 		return nil, err
 	}
 
-	return body, nil
+	return responseBody, nil
 }

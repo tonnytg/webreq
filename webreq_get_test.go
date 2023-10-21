@@ -10,10 +10,10 @@ func TestPackageCall(t *testing.T) {
 	headers := webreq.NewHeaders()
 	headers.Add("Content-Type", "application/json")
 
-	request := webreq.Builder("GET")
+	request := webreq.NewRequest("GET")
 	request.SetURL("https://610aa52552d56400176afebe.mockapi.io/api/v1/friendlist")
 	request.SetHeaders(headers.Headers) // Pass the map directly here
-	request.SetTimeOut(10)
+	request.SetTimeout(10)
 
 	body, err := request.Execute()
 	if err != nil {
@@ -28,7 +28,7 @@ func TestPackageCall(t *testing.T) {
 
 func TestWrongCall(t *testing.T) {
 
-	request := webreq.Builder("GET")
+	request := webreq.NewRequest("GET")
 
 	body, err := request.Execute()
 	if err == nil {

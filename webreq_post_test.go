@@ -35,11 +35,11 @@ func TestPackagePost(t *testing.T) {
 		t.Error(err)
 	}
 
-	request := webreq.Builder("POST")
+	request := webreq.NewRequest("POST")
 	request.SetURL("https://610aa52552d56400176afebe.mockapi.io/api/v1/friendlist")
 	request.SetBody(fBytes)
 	request.SetHeaders(headers.Headers) // Set map directly
-	request.SetTimeOut(10)
+	request.SetTimeout(10)
 
 	body, err := request.Execute()
 	if err != nil {
