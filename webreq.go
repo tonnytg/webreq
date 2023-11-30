@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"io"
+	"log"
 	"net/http"
 	"time"
 )
@@ -47,7 +48,8 @@ func NewRequest(method string) Request {
 
 func (request *Request) SetURL(urlValue string) *Request {
 	if urlValue == "" {
-		panic("URL cannot be empty")
+		log.Println("URL cannot be empty")
+		return nil
 	}
 	request.URL = urlValue
 	return request
