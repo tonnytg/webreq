@@ -14,11 +14,8 @@ type Friend struct {
 
 func main() {
 
-	headers := webreq.NewHeaders()
+	headers := webreq.NewHeaders(nil)
 	headers.Add("Content-Type", "application/json")
-	if len(headers.Headers) != 1 {
-		fmt.Println("headers is empty")
-	}
 
 	f := Friend{
 		CreatedAt: time.Now(),

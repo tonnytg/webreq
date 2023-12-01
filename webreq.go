@@ -100,7 +100,7 @@ func (request *Request) SetData(bodyValue []byte) *Request {
 
 func (request *Request) SetMethod(requestMethod string) *Request {
 	if requestMethod == "" {
-		request.ErrorMessage = "request type is empty"
+		request.ErrorMessage = "request method is empty"
 		return nil
 	}
 	request.Method = requestMethod
