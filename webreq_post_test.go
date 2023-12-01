@@ -16,7 +16,7 @@ type Friend struct {
 
 func TestPackagePost(t *testing.T) {
 
-	headers := webreq.NewHeaders()
+	headers := webreq.NewHeaders(nil)
 	headers.Add("Content-Type", "application/json")
 	if len(headers.Headers) != 1 {
 		t.Error("headers is empty")
@@ -37,7 +37,7 @@ func TestPackagePost(t *testing.T) {
 
 	request := webreq.NewRequest("POST")
 	request.SetURL("https://610aa52552d56400176afebe.mockapi.io/api/v1/friendlist")
-	request.SetBody(fBytes)
+	request.SetData(fBytes)
 	request.SetHeaders(headers.Headers) // Set map directly
 	request.SetTimeout(10)
 

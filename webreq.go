@@ -34,7 +34,7 @@ func (header *Headers) Add(key string, value string) {
 	if key == "" || value == "" {
 		return
 	}
-	header.Headers[key] = value // TODO: check if correct key will be created or must be exists
+	header.Headers[key] = value
 }
 
 type Request struct {
@@ -47,13 +47,16 @@ type Request struct {
 	ErrorMessage    string
 }
 
-func NewRequest(method string) Request {
+func NewRequest(method string) *Request {
 
 	request := Request{}
 
-	request.SetMethod(method)
+	r := request.SetMethod(method)
+	if r == nil {
+		return nil
+	}
 
-	return Request{
+	return &Request{
 		TimeoutDuration: 10 * time.Second,
 		Method:          method,
 	}

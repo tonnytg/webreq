@@ -5,20 +5,12 @@ import (
 	"testing"
 )
 
-// fakeWriter é uma implementação simples de io.Writer para capturar a saída do log
-type fakeWriter struct {
-	target *string
-}
-
-func (fw *fakeWriter) Write(p []byte) (n int, err error) {
-	*fw.target = string(p)
-	return len(p), nil
-}
-
 func TestPackageCall(t *testing.T) {
 
-	headers := webreq.NewHeaders()
-	headers.Add("Content-Type", "application/json")
+	var headersList = make(map[string]string)
+	headersList["Content-Type"] = "application/json"
+
+	headers := webreq.NewHeaders(headersList)
 
 	request := webreq.NewRequest("GET")
 	request.SetURL("https://610aa52552d56400176afebe.mockapi.io/api/v1/friendlist")
@@ -33,7 +25,6 @@ func TestPackageCall(t *testing.T) {
 	if bodyString == "" {
 		t.Error("body is empty")
 	}
-
 }
 
 func TestSetURL(t *testing.T) {
@@ -47,4 +38,54 @@ func TestSetURL(t *testing.T) {
 			t.Errorf("URL not set correctly")
 		}
 	})
+}
+
+func TestSetNewRequest(t *testing.T) {
+
+	newRequest := webreq.NewRequest("GET")
+	if newRequest == nil {
+		t.Error("newRequest is nil")
+	}
+}
+
+func TestSetMethod(t *testing.T) {
+
+	request := webreq.NewRequest("GET")
+	if request == nil {
+		t.Error("request is nil")
+	}
+	request.SetMethod("GET")
+	if request.Method != "GET" {
+		t.Error("request.Method is not GET")
+	}
+	return
+}
+
+func TestEndToEnd(t *testing.T) {
+
+	headers := webreq.NewHeaders(nil)
+	headers.Add("Content-Type", "application/json")
+
+	request := webreq.NewRequest("GET")
+	if request == nil {
+		t.Error("request is nil")
+	}
+	request.SetURL("https://610aa52552d56400176afebe.mockapi.io/api/v1/friendlist")
+	if request.ErrorMessage != "" {
+		t.Error("request.ErrorMessage is not empty")
+	}
+	request.SetHeaders(headers.Headers)
+	if request.ErrorMessage != "" {
+		t.Error("request.ErrorMessage is not empty")
+	}
+	request.SetTimeout(10)
+
+	body, err := request.Execute()
+	if err != nil {
+		t.Error(err)
+	}
+	bodyString := string(body)
+	if bodyString == "" {
+		t.Error("body is empty")
+	}
 }

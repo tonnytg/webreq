@@ -33,7 +33,7 @@ func main() {
 
 	request := webreq.NewRequest("POST")
 	request.SetURL("https://623a666d5f037c136217238f.mockapi.io/api/v1/categories")
-	request.SetBody(fBytes)
+	request.SetData(fBytes)
 	request.SetHeaders(headers.Headers) // Set map directly
 	request.SetTimeout(10)
 
