@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"io"
-	"log"
 	"net/http"
 	"time"
 )
@@ -20,35 +19,49 @@ type Headers struct {
 	Headers HeadersMap
 }
 
-func NewHeaders() *Headers {
+func NewHeaders(headers map[string]string) *Headers {
+	if len(headers) != 0 {
+		return &Headers{
+			Headers: headers,
+		}
+	}
 	return &Headers{
 		Headers: make(HeadersMap),
 	}
 }
 
 func (header *Headers) Add(key string, value string) {
-	header.Headers[key] = value
+	if key == "" || value == "" {
+		return
+	}
+	header.Headers[key] = value // TODO: check if correct key will be created or must be exists
 }
 
 type Request struct {
 	URL             string
 	TimeoutDuration time.Duration
 	Headers         HeadersMap
-	RequestType     string
-	RequestBody     []byte
+	Method          string
+	Data            []byte
 	StatusCode      int
+	ErrorMessage    string
 }
 
 func NewRequest(method string) Request {
+
+	request := Request{}
+
+	request.SetMethod(method)
+
 	return Request{
 		TimeoutDuration: 10 * time.Second,
-		RequestType:     method,
+		Method:          method,
 	}
 }
 
 func (request *Request) SetURL(urlValue string) *Request {
 	if urlValue == "" {
-		log.Println("URL cannot be empty")
+		request.ErrorMessage = "url is empty"
 		return nil
 	}
 	request.URL = urlValue
@@ -56,26 +69,46 @@ func (request *Request) SetURL(urlValue string) *Request {
 }
 
 func (request *Request) SetTimeout(timeout int) *Request {
+	if timeout == 0 {
+		request.TimeoutDuration = time.Duration(10) * time.Second
+		return request
+	}
 	request.TimeoutDuration = time.Duration(timeout) * time.Second
 	return request
 }
 
 func (request *Request) SetHeaders(headers HeadersMap) *Request {
+	if len(headers) == 0 {
+		request.ErrorMessage = "headers is empty"
+		return request
+	}
 	request.Headers = headers
 	return request
 }
 
-func (request *Request) SetBody(bodyValue []byte) *Request {
-	request.RequestBody = bodyValue
+func (request *Request) SetData(bodyValue []byte) *Request {
+	if len(bodyValue) == 0 {
+		request.ErrorMessage = "body is empty"
+		return request
+	}
+	request.Data = bodyValue
 	return request
 }
 
-func (request *Request) SetRequestType(requestTypeValue string) *Request {
-	request.RequestType = requestTypeValue
+func (request *Request) SetMethod(requestMethod string) *Request {
+	if requestMethod == "" {
+		request.ErrorMessage = "request type is empty"
+		return nil
+	}
+	request.Method = requestMethod
 	return request
 }
 
 func (request *Request) SetStatusCode(statusCodeValue int) *Request {
+	if statusCodeValue == 0 {
+		request.ErrorMessage = "status code is empty"
+		return request
+	}
 	request.StatusCode = statusCodeValue
 	return request
 }
@@ -85,7 +118,7 @@ func (request *Request) Execute() ([]byte, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), request.TimeoutDuration)
 	defer cancel()
 
-	webRequest, err := http.NewRequestWithContext(ctx, request.RequestType, request.URL, bytes.NewReader(request.RequestBody))
+	webRequest, err := http.NewRequestWithContext(ctx, request.Method, request.URL, bytes.NewReader(request.Data))
 	if err != nil {
 		return nil, err
 	}
