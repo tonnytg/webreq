@@ -47,6 +47,7 @@ type Request struct {
 	ErrorMessage    string
 }
 
+// NewRequest create new request with method but you can change it later with SetMethod
 func NewRequest(method string) *Request {
 
 	request := Request{}
@@ -62,6 +63,7 @@ func NewRequest(method string) *Request {
 	}
 }
 
+// SetURL sets the url of the request and checks if it is empty
 func (request *Request) SetURL(urlValue string) *Request {
 	if urlValue == "" {
 		request.ErrorMessage = "url is empty"
@@ -71,6 +73,7 @@ func (request *Request) SetURL(urlValue string) *Request {
 	return request
 }
 
+// SetTimeout sets the timeout and multiplier 10 by time.Second
 func (request *Request) SetTimeout(timeout int) *Request {
 	if timeout == 0 {
 		request.TimeoutDuration = time.Duration(10) * time.Second
@@ -80,6 +83,8 @@ func (request *Request) SetTimeout(timeout int) *Request {
 	return request
 }
 
+// SetHeaders sets the headers of the request and checks if it is empty
+// you can user add or create map[string]string and use NewHeaders
 func (request *Request) SetHeaders(headers HeadersMap) *Request {
 	if len(headers) == 0 {
 		request.ErrorMessage = "headers is empty"
@@ -89,6 +94,7 @@ func (request *Request) SetHeaders(headers HeadersMap) *Request {
 	return request
 }
 
+// SetData it is data to send with POST, PUT, PATCH
 func (request *Request) SetData(bodyValue []byte) *Request {
 	if len(bodyValue) == 0 {
 		request.ErrorMessage = "body is empty"
@@ -98,6 +104,7 @@ func (request *Request) SetData(bodyValue []byte) *Request {
 	return request
 }
 
+// SetMethod sets the method of the request and checks if it is empty
 func (request *Request) SetMethod(requestMethod string) *Request {
 	if requestMethod == "" {
 		request.ErrorMessage = "request method is empty"
@@ -107,6 +114,8 @@ func (request *Request) SetMethod(requestMethod string) *Request {
 	return request
 }
 
+// SetStatusCode get Statuscode from response and save in object request
+// if status code is equal 0 then return error
 func (request *Request) SetStatusCode(statusCodeValue int) *Request {
 	if statusCodeValue == 0 {
 		request.ErrorMessage = "status code is empty"
@@ -116,6 +125,8 @@ func (request *Request) SetStatusCode(statusCodeValue int) *Request {
 	return request
 }
 
+// Execute send request and return slice of bytes and error
+// check tests GET and POST to see how to use or folder examples
 func (request *Request) Execute() ([]byte, error) {
 	client := &http.Client{}
 	ctx, cancel := context.WithTimeout(context.Background(), request.TimeoutDuration)
