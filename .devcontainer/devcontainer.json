@@ -1,0 +1,13 @@
+{
+  "name": "Go Development Environment",
+  "image": "golang:1.22",
+  "settings": {
+    "terminal.integrated.shell.linux": "/bin/bash"
+  },
+  "postCreateCommand": "go mod tidy",
+  "forwardPorts": [
+    8080
+  ],
+  "features": {}
+}
+
