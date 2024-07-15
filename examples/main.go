@@ -34,14 +34,16 @@ func main() {
 	request.SetHeaders(headers.Headers) // Set map directly
 	request.SetTimeout(10)
 
-	body, err := request.Execute()
+	response, err := request.Execute()
 	if err != nil {
 		fmt.Println(err)
 	}
-	bodyString := string(body)
+	bodyString := string(response)
 	if bodyString == "" {
-		fmt.Println("body is empty")
+		fmt.Println("response status code:", request.StatusCode)
+		fmt.Println("response body:", bodyString)
 	}
 
-	fmt.Println(bodyString)
+	fmt.Println("response status code:", request.StatusCode)
+	fmt.Println("response body:", bodyString)
 }
