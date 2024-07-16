@@ -29,8 +29,8 @@ func TestPackageCall(t *testing.T) {
 	}
 }
 
+// TestSetURL verify URL it is correctly defined
 func TestSetURL(t *testing.T) {
-	// Teste para verificar se a URL é definida corretamente quando não está vazia
 	t.Run("Non-empty URL", func(t *testing.T) {
 		request := webreq.NewRequest("GET")
 		request.SetURL("https://example.com")

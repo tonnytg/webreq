@@ -31,6 +31,52 @@ So many times I needed to make a request in an API and after convert body to str
 
 What do you think? Liked, set star in this project to help me to help others!
 
+### Using only Http Get
+
+    client := &http.Client{
+        Timeout: 10 * time.Second,
+    }
+    
+    req, err := http.NewRequest("GET", "https://api.example.com/data", nil)
+    if err != nil {
+        fmt.Println("Error creating request:", err)
+        return
+    }
+    req.Header.Add("Authorization", "Bearer your_token")
+    
+    resp, err := client.Do(req)
+    if err != nil {
+        fmt.Println("Error executing request:", err)
+        return
+    }
+    defer resp.Body.Close()
+    
+    body, err := io.ReadAll(resp.Body)
+    if err != nil {
+        fmt.Println("Error reading response body:", err)
+        return
+    }
+    fmt.Println("Response:", string(body))
+
+### Using WebReq
+
+    headers := webreq.NewHeaders(map[string]string{
+        "Content-Type": "application/json",
+        "Authorization": "Bearer your_token",
+    })
+    
+    request := webreq.NewRequest("POST")
+    request.SetURL("https://api.example.com/data")
+    request.SetData([]byte(`{"key":"value"}`))
+    request.SetHeaders(headers.Headers)
+    request.SetTimeout(10)
+    
+    response, err := request.Execute()
+    if err != nil {
+        fmt.Println("Error executing request:", err)
+        return
+    }
+    fmt.Println("Response:", string(response))
 
 ## Install
 
