@@ -16,25 +16,25 @@ const (
 type HeadersMap map[string]string
 
 type Headers struct {
-	Headers HeadersMap
+	ListHeaders HeadersMap
 }
 
 // NewHeaders creates a new Headers instance, initializing with provided headers or an empty map
 func NewHeaders(headers map[string]string) *Headers {
 	if headers != nil {
 		return &Headers{
-			Headers: headers,
+			ListHeaders: headers,
 		}
 	}
 	return &Headers{
-		Headers: make(HeadersMap),
+		ListHeaders: make(HeadersMap),
 	}
 }
 
 // Add adds a new header key-value pair to the Headers
 func (header *Headers) Add(key string, value string) {
 	if key != "" && value != "" {
-		header.Headers[key] = value
+		header.ListHeaders[key] = value
 	}
 }
 
@@ -112,6 +112,10 @@ func (request *Request) SetStatusCode(statusCodeValue int) *Request {
 		request.ErrorMessage = "status code is empty"
 	}
 	return request
+}
+
+func (request *Request) Check() error {
+	return nil
 }
 
 // Execute sends the request and returns the response body and error if any

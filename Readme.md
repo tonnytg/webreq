@@ -16,12 +16,16 @@ You can use Get or Post to make a request, and then use the `Response` object to
     )
     
     func main() {
-        response, err := webreq.Get("https://api.example.com/data")
+        request := webreq.NewRequest("GET")
+        request.SetURL("https://example.com")
+        request.SetTimeout(10)
+    
+        // Execute the request and get the response
+        response, err := request.Execute()
         if err != nil {
-            fmt.Println("Error:", err)
+            fmt.Println("Error executing request:", err)
             return
         }
-        fmt.Println("Response:", response)
     }
 
 
@@ -60,10 +64,9 @@ What do you think? Liked, set star in this project to help me to help others!
 
 ### Using WebReq
 
-    headers := webreq.NewHeaders(map[string]string{
-        "Content-Type": "application/json",
-        "Authorization": "Bearer your_token",
-    })
+	var headers = make(map[string]string)
+	headers["Content-Type"] = "application/json"
+    headers["Authorization"] = "Bearer your_token"
     
     request := webreq.NewRequest("POST")
     request.SetURL("https://api.example.com/data")
@@ -96,12 +99,15 @@ Create a slice of headers to use and input in request
     )
     
     func main() {
-        response, err := webreq.Get("https://api.example.com/data")
+        request := webreq.NewRequest("GET")
+        request.SetURL("https://example.com")
+    
+        // Execute the request and get the response
+        response, err := request.Execute()
         if err != nil {
-            fmt.Println("Error:", err)
+            fmt.Println("Error executing request:", err)
             return
         }
-        fmt.Println("Response:", response)
     }
 
 
@@ -117,13 +123,22 @@ Create a body data to send in request
     )
     
     func main() {
-        data := map[string]string{"key": "value"}
-        response, err := webreq.Post("https://api.example.com/data", data)
+        var headers = make(map[string]string)
+        headers["Content-Type"] = "application/json"
+        headers["Authorization"] = "Bearer your_token"
+        
+        request := webreq.NewRequest("POST")
+        request.SetURL("https://api.example.com/data")
+        request.SetData([]byte(`{"key":"value"}`)) // set data to POST
+        request.SetHeaders(headers.Headers)
+        request.SetTimeout(10)
+        
+        response, err := request.Execute()
         if err != nil {
-            fmt.Println("Error:", err)
+            fmt.Println("Error executing request:", err)
             return
         }
-        fmt.Println("Response:", response)
+        fmt.Println("Response:", string(response))
     }
         
 
@@ -133,17 +148,24 @@ Create a body data to send in request
 
 ### Custom Headers
 
-    headers := map[string]string{
-        "Content-Type": "application/json",
-        "Authorization": "Bearer your_token",
-    }
-    
-    response, err := webreq.GetWithHeaders("https://api.example.com/data", headers)
-    if err != nil {
-        fmt.Println("Error:", err)
-        return
-    }
-    fmt.Println("Response:", response)
+        headers := webreq.NewHeaders(nil)
+        headers.Add("Content-Type", "application/json")
+        if headers.Headers["Content-Type"] != "application/json" {
+            t.Error("headers.Headers[Content-Type] is not application/json")
+        }
+        
+        request := webreq.NewRequest("POST")
+        request.SetURL("https://api.example.com/data")
+        request.SetData([]byte(`{"key":"value"}`)) // set data to POST
+        request.SetHeaders(headers.Headers)
+        request.SetTimeout(10)
+        
+        response, err := request.Execute()
+        if err != nil {
+            fmt.Println("Error executing request:", err)
+            return
+        }
+        fmt.Println("Response:", string(response))
 
 
 

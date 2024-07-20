@@ -14,19 +14,18 @@ type Friend struct {
 }
 
 func main() {
-	// Initialize headers with an empty map
-	headers := webreq.NewHeaders(nil)
-	// Add Content-Type header
-	headers.Add("Content-Type", "application/json")
+
+	var headers = make(map[string]string)
+	headers["Content-Type"] = "application/json"
 
 	// Create a new Friend instance
-	f := Friend{
+	data := Friend{
 		CreatedAt: time.Now(),
 		Name:      "Tonny",
 	}
 
 	// Convert Friend instance to JSON bytes
-	fBytes, err := json.Marshal(f)
+	dataBytes, err := json.Marshal(data)
 	if err != nil {
 		fmt.Println("Error marshalling JSON:", err)
 		return
@@ -35,11 +34,11 @@ func main() {
 	// Create a new POST request
 	request := webreq.NewRequest("POST")
 	// Set the request URL
-	request.SetURL("https://623a666d5f037c136217238f.mockapi.io/api/v1/categories")
+	request.SetURL("https://example.com/api/v1/values")
 	// Set the request body data
-	request.SetData(fBytes)
+	request.SetData(dataBytes)
 	// Set the request headers
-	request.SetHeaders(headers.Headers) // Set map directly
+	request.SetHeaders(headers) // Set map directly
 	// Set the request timeout to 10 seconds
 	request.SetTimeout(10)
 

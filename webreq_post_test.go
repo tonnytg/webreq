@@ -18,7 +18,7 @@ func TestPackagePost(t *testing.T) {
 
 	headers := webreq.NewHeaders(nil)
 	headers.Add("Content-Type", "application/json")
-	if len(headers.Headers) != 1 {
+	if len(headers.ListHeaders) != 1 {
 		t.Error("headers is empty")
 	}
 
@@ -36,9 +36,9 @@ func TestPackagePost(t *testing.T) {
 	}
 
 	request := webreq.NewRequest("POST")
-	request.SetURL("https://610aa52552d56400176afebe.mockapi.io/api/v1/friendlist")
+	request.SetURL("https://examples.com/values")
 	request.SetData(fBytes)
-	request.SetHeaders(headers.Headers) // Set map directly
+	request.SetHeaders(headers.ListHeaders) // Set map directly
 	request.SetTimeout(10)
 
 	body, err := request.Execute()

@@ -15,8 +15,8 @@ func TestPackageCall(t *testing.T) {
 	headers := webreq.NewHeaders(headersList)
 
 	request := webreq.NewRequest("GET")
-	request.SetURL("https://610aa52552d56400176afebe.mockapi.io/api/v1/friendlist")
-	request.SetHeaders(headers.Headers) // Pass the map directly here
+	request.SetURL("https://examples.com/values")
+	request.SetHeaders(headers.ListHeaders) // Pass the map directly here
 	request.SetTimeout(10)
 
 	body, err := request.Execute()
@@ -58,12 +58,12 @@ func TestSetHeaders(t *testing.T) {
 	headersList["Content-Type"] = "application/json"
 
 	headers := webreq.NewHeaders(headersList)
-	if headers.Headers["Content-Type"] != "application/json" {
+	if headers.ListHeaders["Content-Type"] != "application/json" {
 		t.Error("headers.Headers[Content-Type] is not application/json")
 	}
 
 	request := webreq.NewRequest("GET")
-	request.SetHeaders(headers.Headers)
+	request.SetHeaders(headers.ListHeaders)
 	if request.ErrorMessage != "" {
 		t.Error("request.ErrorMessage is not empty")
 	}
@@ -74,12 +74,12 @@ func TestSetHeaders2(t *testing.T) {
 
 	headers := webreq.NewHeaders(nil)
 	headers.Add("Content-Type", "application/json")
-	if headers.Headers["Content-Type"] != "application/json" {
+	if headers.ListHeaders["Content-Type"] != "application/json" {
 		t.Error("headers.Headers[Content-Type] is not application/json")
 	}
 
 	request := webreq.NewRequest("GET")
-	request.SetHeaders(headers.Headers)
+	request.SetHeaders(headers.ListHeaders)
 	if request.ErrorMessage != "" {
 		t.Error("request.ErrorMessage is not empty")
 	}
@@ -149,11 +149,11 @@ func TestEndToEnd(t *testing.T) {
 	if request == nil {
 		t.Error("request is nil")
 	}
-	request.SetURL("https://610aa52552d56400176afebe.mockapi.io/api/v1/friendlist")
+	request.SetURL("https://example.com/values")
 	if request.ErrorMessage != "" {
 		t.Error("request.ErrorMessage is not empty")
 	}
-	request.SetHeaders(headers.Headers)
+	request.SetHeaders(headers.ListHeaders)
 	if request.ErrorMessage != "" {
 		t.Error("request.ErrorMessage is not empty")
 	}
