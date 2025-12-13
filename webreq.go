@@ -5,6 +5,7 @@ import (
 	"context"
 	"io"
 	"net/http"
+	"sync"
 	"time"
 )
 
@@ -12,6 +13,27 @@ const (
 	MethodGet  = "GET"
 	MethodPost = "POST"
 )
+
+var (
+	// defaultClient is a shared HTTP client with connection pooling for better performance
+	defaultClient     *http.Client
+	defaultClientOnce sync.Once
+)
+
+// getDefaultClient returns a shared HTTP client with optimized transport settings
+func getDefaultClient() *http.Client {
+	defaultClientOnce.Do(func() {
+		transport := &http.Transport{
+			MaxIdleConns:        100,
+			MaxIdleConnsPerHost: 10,
+			IdleConnTimeout:     90 * time.Second,
+		}
+		defaultClient = &http.Client{
+			Transport: transport,
+		}
+	})
+	return defaultClient
+}
 
 type HeadersMap map[string]string
 
@@ -129,11 +151,21 @@ func (request *Request) Check() error {
 
 // Execute sends the request and returns the response body and error if any
 func (request *Request) Execute() ([]byte, error) {
-	client := &http.Client{}
 	ctx, cancel := context.WithTimeout(context.Background(), request.TimeoutDuration)
 	defer cancel()
+	return request.ExecuteWithContext(ctx)
+}
 
-	webRequest, err := http.NewRequestWithContext(ctx, request.Method, request.URL, bytes.NewReader(request.Data))
+// ExecuteWithContext sends the request with a custom context and returns the response body and error if any
+func (request *Request) ExecuteWithContext(ctx context.Context) ([]byte, error) {
+	client := getDefaultClient()
+
+	var body io.Reader
+	if len(request.Data) > 0 {
+		body = bytes.NewReader(request.Data)
+	}
+
+	webRequest, err := http.NewRequestWithContext(ctx, request.Method, request.URL, body)
 	if err != nil {
 		return nil, err
 	}
