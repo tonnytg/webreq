@@ -11,7 +11,8 @@ import (
 )
 
 func main() {
-	fmt.Println("=== WebReq Performance Demo ===\n")
+	fmt.Println("=== WebReq Performance Demo ===")
+	fmt.Println()
 
 	// Demo 1: Simple GET request
 	fmt.Println("1. Simple GET Request:")
