@@ -6,7 +6,6 @@ import (
 	"net/http/httptest"
 	"sync"
 	"testing"
-	"time"
 
 	"github.com/tonnytg/webreq"
 )
@@ -138,13 +137,13 @@ func BenchmarkExecuteWithContext(b *testing.B) {
 	}))
 	defer ts.Close()
 
+	ctx := context.Background()
+
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		req := webreq.NewRequest("GET")
 		req.SetURL(ts.URL)
 		_, err := req.ExecuteWithContext(ctx)
-		cancel()
 		if err != nil {
 			b.Fatalf("unexpected error: %v", err)
 		}
