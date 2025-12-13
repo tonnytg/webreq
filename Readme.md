@@ -1,6 +1,9 @@
 # Web Request for Go Packages
 [![Go Report Card](https://goreportcard.com/badge/github.com/tonnytg/webreq)](https://goreportcard.com/report/github.com/tonnytg/webreq) [![codecov](https://codecov.io/gh/tonnytg/webreq/branch/main/graph/badge.svg?token=PYI6QQKGTV)](https://codecov.io/gh/tonnytg/webreq) ![example workflow](https://github.com/tonnytg/webreq/actions/workflows/go.yml/badge.svg) 
 
+## What problem solve?
+Create easily web request for APIs with Headers using methods `GET` or `POST`
+
 ## What is this?
 
 This is module to help you make web requests in Go, it is a wrapper around the standard library's `http` package.
@@ -11,21 +14,22 @@ You can use Get or Post to make a request, and then use the `Response` object to
     package main
     
     import (
-        "fmt"
+        "log"
         "github.com/tonnytg/webreq"
     )
-    
+
     func main() {
-        request := webreq.NewRequest("GET")
-        request.SetURL("https://example.com")
-        request.SetTimeout(10)
     
-        // Execute the request and get the response
-        response, err := request.Execute()
+        request := webreq.NewRequest("GET")
+        request.SetURL("https://6657cc695c3617052645e2bd.mockapi.io/v1/core/courses")
+    
+        data, err := request.Execute()
         if err != nil {
-            fmt.Println("Error executing request:", err)
+            log.Fatalf("Request failed: %v", err)
             return
         }
+        
+        log.Println(string(data))
     }
 
 
@@ -71,7 +75,7 @@ What do you think? Liked, set star in this project to help me to help others!
     request := webreq.NewRequest("POST")
     request.SetURL("https://api.example.com/data")
     request.SetData([]byte(`{"key":"value"}`))
-    request.SetHeaders(headers.Headers)
+    request.SetHeaders(headers)
     request.SetTimeout(10)
     
     response, err := request.Execute()
@@ -94,7 +98,7 @@ Create a slice of headers to use and input in request
     package main
     
     import (
-        "fmt"
+        "log"
         "github.com/tonnytg/webreq"
     )
     
@@ -108,6 +112,8 @@ Create a slice of headers to use and input in request
             fmt.Println("Error executing request:", err)
             return
         }
+
+        log.Println(string(response))
     }
 
 
@@ -118,7 +124,7 @@ Create a body data to send in request
     package main
     
     import (
-        "fmt"
+        "log"
         "github.com/tonnytg/webreq"
     )
     
@@ -130,15 +136,15 @@ Create a body data to send in request
         request := webreq.NewRequest("POST")
         request.SetURL("https://api.example.com/data")
         request.SetData([]byte(`{"key":"value"}`)) // set data to POST
-        request.SetHeaders(headers.Headers)
+        request.SetHeaders(headers)
         request.SetTimeout(10)
         
         response, err := request.Execute()
         if err != nil {
-            fmt.Println("Error executing request:", err)
+            log.Println("Error executing request:", err)
             return
         }
-        fmt.Println("Response:", string(response))
+        log.Println("Response:", string(response))
     }
         
 
@@ -148,41 +154,23 @@ Create a body data to send in request
 
 ### Custom Headers
 
-        headers := webreq.NewHeaders(nil)
-        headers.Add("Content-Type", "application/json")
-        if headers.Headers["Content-Type"] != "application/json" {
-            t.Error("headers.Headers[Content-Type] is not application/json")
-        }
-        
-        request := webreq.NewRequest("POST")
-        request.SetURL("https://api.example.com/data")
-        request.SetData([]byte(`{"key":"value"}`)) // set data to POST
-        request.SetHeaders(headers.Headers)
-        request.SetTimeout(10)
-        
-        response, err := request.Execute()
-        if err != nil {
-            fmt.Println("Error executing request:", err)
-            return
-        }
-        fmt.Println("Response:", string(response))
-
-
-
-### Erro Handlin
-
-    response, err := webreq.Get("https://api.example.com/data")
-    if err != nil {
-        switch err.(type) {
-        case webreq.HTTPError:
-            fmt.Println("HTTP error occurred:", err)
-        default:
-            fmt.Println("An error occurred:", err)
-        }
-        return
-    }
-    fmt.Println("Response:", response)
-
+	headersList := map[string]string{
+		"Content-Type":  "application/json",
+		"Authorization": "Bearer your_token",
+	}
+	
+	request := webreq.NewRequest("POST")
+	request.SetURL("https://6657cc695c3617052645e2bd.mockapi.io/v1/core/courses")
+	request.SetData([]byte(`{"key":"value"}`)) // set data to POST
+	request.SetHeaders(headersList)
+	request.SetTimeout(10)
+	
+	response, err := request.Execute()
+	if err != nil {
+		log.Println("Error executing request:", err)
+		return
+	}
+	log.Println("Response:", string(response))
 
 ## Contributing
 - Fork the repository
