@@ -115,6 +115,15 @@ func (request *Request) SetStatusCode(statusCodeValue int) *Request {
 }
 
 func (request *Request) Check() error {
+
+	if request.URL == "" {
+		request.ErrorMessage = "url is empty"
+	}
+
+	if request.Method == "" {
+		request.ErrorMessage = "method is empty"
+	}
+
 	return nil
 }
 
