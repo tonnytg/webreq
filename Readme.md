@@ -172,6 +172,44 @@ Create a body data to send in request
 	}
 	log.Println("Response:", string(response))
 
+### Custom Context (for cancellation, tracing, etc.)
+
+	package main
+	
+	import (
+		"context"
+		"log"
+		"time"
+		"github.com/tonnytg/webreq"
+	)
+	
+	func main() {
+		// Create a context with custom timeout or cancellation
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		
+		request := webreq.NewRequest("GET")
+		request.SetURL("https://api.example.com/data")
+		
+		// Use ExecuteWithContext for custom context control
+		response, err := request.ExecuteWithContext(ctx)
+		if err != nil {
+			log.Println("Error executing request:", err)
+			return
+		}
+		log.Println("Response:", string(response))
+	}
+
+## Performance
+
+WebReq is optimized for performance with:
+- **Connection Pooling**: Shared HTTP client with connection reuse (up to 100 idle connections)
+- **HTTP Keep-Alive**: Reduces latency for multiple requests to the same host
+- **Efficient Memory Usage**: ~6KB allocation per request with optimized body handling
+- **Concurrent Performance**: 5-6x faster under parallel load thanks to connection pooling
+
+See [PERFORMANCE_IMPROVEMENTS.md](PERFORMANCE_IMPROVEMENTS.md) for detailed benchmarks and optimization details.
+
 ## Contributing
 - Fork the repository
 - Create a new branch (git checkout -b feature-foo)
