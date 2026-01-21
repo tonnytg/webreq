@@ -210,6 +210,15 @@ WebReq is optimized for performance with:
 
 See [PERFORMANCE_IMPROVEMENTS.md](PERFORMANCE_IMPROVEMENTS.md) for detailed benchmarks and optimization details.
 
+## Security
+
+WebReq includes built-in security features:
+- **Response Size Limits**: Prevents memory exhaustion attacks with a default 100MB limit
+- **Configurable Limits**: Customize max response size via `SetMaxResponseSize()`
+- **Timeout Protection**: Default 10-second timeout prevents hanging requests
+
+See [SECURITY.md](SECURITY.md) for detailed security information and best practices.
+
 ## Contributing
 - Fork the repository
 - Create a new branch (git checkout -b feature-foo)
