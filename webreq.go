@@ -12,6 +12,8 @@ import (
 const (
 	MethodGet  = "GET"
 	MethodPost = "POST"
+	// DefaultMaxResponseSize is the default maximum size for response bodies (100MB)
+	DefaultMaxResponseSize = 100 * 1024 * 1024 // 100MB
 )
 
 var (
@@ -68,6 +70,7 @@ type Request struct {
 	Data            []byte
 	StatusCode      int
 	ErrorMessage    string
+	MaxResponseSize int64 // Maximum size for response body in bytes
 }
 
 // NewRequest creates a new Request with the specified method
@@ -75,6 +78,7 @@ func NewRequest(method string) *Request {
 	return &Request{
 		TimeoutDuration: 10 * time.Second,
 		Method:          method,
+		MaxResponseSize: DefaultMaxResponseSize,
 	}
 }
 
@@ -92,6 +96,14 @@ func (request *Request) SetURL(urlValue string) *Request {
 func (request *Request) SetTimeout(timeout int) *Request {
 	if timeout > 0 {
 		request.TimeoutDuration = time.Duration(timeout) * time.Second
+	}
+	return request
+}
+
+// SetMaxResponseSize sets the maximum response body size in bytes
+func (request *Request) SetMaxResponseSize(size int64) *Request {
+	if size > 0 {
+		request.MaxResponseSize = size
 	}
 	return request
 }
@@ -180,7 +192,9 @@ func (request *Request) ExecuteWithContext(ctx context.Context) ([]byte, error) 
 	}
 	defer response.Body.Close()
 
-	responseBody, err := io.ReadAll(response.Body)
+	// Limit response body size to prevent memory exhaustion attacks
+	limitedReader := io.LimitReader(response.Body, request.MaxResponseSize)
+	responseBody, err := io.ReadAll(limitedReader)
 	if err != nil {
 		return nil, err
 	}
